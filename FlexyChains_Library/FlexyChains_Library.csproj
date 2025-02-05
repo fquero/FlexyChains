@@ -64,6 +64,7 @@
     <Compile Include="FileManager.cs" />
     <Compile Include="Interfaces\INodeManipulator.cs" />
     <Compile Include="Interfaces\IProtectionProvider.cs" />
+    <Compile Include="NodeManipulation\NodeEditor.cs" />
     <Compile Include="NodeManipulation\NodeEmailSettings.cs" />
     <Compile Include="NodeManipulatorFactory.cs" />
     <Compile Include="NodeManipulation\NodeBase.cs" />

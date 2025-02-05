@@ -6,107 +6,122 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace FlexyChains_Console
 {
     internal class Manipulation
     {
-       private FileManager _fileManager;
-       private INodeManipulator _manipulator;
+        private FileManager _fileManager;
+        private INodeManipulator _manipulator;
 
-        public Manipulation()
-        {
-            InitialPrompt();
-        }
-        public void NodeManipulatorSelector()
-        {
-            Console.WriteLine("Select Manipulation Type:");
-            foreach (var option in NodeManipulatorFactory.GetManipulationIndex())
-            {
-                Console.WriteLine($"[{option.Key}]: {option.Value.Name}");
-            }
-            Console.WriteLine("[0]: Cancel");
+        private XmlNode _parentNode;
+        private String _parentNodeToString;
+        private Dictionary<int, XmlNode> _nodesDictionary;
 
-            int.TryParse(Console.ReadLine(), out int selectedOptionIndex);
+        public Manipulation() => Start();
 
-            if (selectedOptionIndex == 0)
-            {
-                InitialPrompt();
-                return;
-            }
-
-            NodeManipulatorFactory.GetManipulationIndex().TryGetValue(selectedOptionIndex, out ManipulationOption selectedOption);
-
-            _manipulator = NodeManipulatorFactory.Create(selectedOption.ManipulatorType, selectedOption.Arguments);
-            _manipulator.AddDocument(_fileManager.Document);
-
-            StartManipulation();
-
-        }
-
-        public void InitialPrompt()
+        public void Start()
         {
             try
             {
-                Console.WriteLine("Write FilePath to web.config:");
-                Console.WriteLine("(Type 'quit' to exit)");
-                string path = Console.ReadLine();
+                Clipboard.SetText("C:\\Users\\franp\\source\\repos\\FlexyChains\\FlexyChains_Library.Tests\\assets\\my\\web.config");
 
-                if(path == "quit") Environment.Exit(0);
-                
+                string path = MenuHandler.SetFilePath();
+
                 //Select file
                 _fileManager = new FileManager(path);
-                NodeManipulatorSelector();
+                ManipulatorSelection();
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error: {ex.Message}");
                 Console.WriteLine("-------------------------");
-                InitialPrompt();
+                Start();
             }
 
         }
 
+
+        public void ManipulatorSelection()
+        {
+            int selectedOptionIndex = MenuHandler.SelectManipulatorType();
+
+            if (selectedOptionIndex == 0)
+            {
+                Start();
+                return;
+            }
+
+            try
+            {
+                NodeManipulatorFactory.GetManipulationIndex().TryGetValue(selectedOptionIndex, out ManipulationOption selectedOption);
+                _manipulator = NodeManipulatorFactory.Create(selectedOption.ManipulatorType, selectedOption.Arguments);
+                _manipulator.AddDocument(_fileManager.Document);
+                StartManipulation();
+            }
+            catch (Exception ex)
+            {
+                Console.Clear();
+                throw new Exception(ex.Message);
+            }
+            finally
+            {
+                Start();
+            }
+            
+
+        }
+
+        
 
         private void StartManipulation()
         {
-            
+
             if (_manipulator.IsNodeEncrypted())
             {
-                Console.WriteLine("Node is encrypted. Do you want to desencrypt and read it? (y/n)");
-                string election = (string)(Console.ReadLine());
-                if ((string)election == "y")
-                {
-                    _manipulator.DecryptNode();
-                    ShowItems();
-                    return;
-                }
-                else
-                {
-                    InitialPrompt();
-                }
+                _manipulator.DecryptNode();
             }
-            else
-            {
-                ShowItems();
-            }
+            _parentNode = _manipulator.GetNode();
+
+            _parentNodeToString = $"<{_parentNode.Name} {string.Join(" ", _parentNode.Attributes.Cast<XmlAttribute>().Select(a => $"{a.Name}=\"{a.Value}\""))}>";
+            CreateNodesDictionary();
+
+            ShowNodeContent();
+
         }
 
-        public void ShowItems()
+        private void ShowNodeContent()
         {
             try
             {
-                XmlNode parentNode = _manipulator.GetNode();
-                Console.WriteLine($"Parent node: <{parentNode.Name} {string.Join(" ", parentNode.Attributes.Cast<XmlAttribute>().Select(a => $"{a.Name}=\"{a.Value}\""))}>");
-                Console.WriteLine("--------------------------------------------");
-
-                foreach (XmlNode node2 in _manipulator.GetItems())
+                while(true)
                 {
-                    Console.WriteLine(node2.OuterXml);
-                    Console.WriteLine("--------------------------------------------");
-                }
-                NodeManipulatorSelector();
+                    int option = MenuHandler.DisplayNodeContent(_parentNodeToString, _nodesDictionary);
 
+                    try
+                    {
+                        if (option == 1)
+                        {
+                            NodeEditionMenu();
+                            break;
+                        }
+                        else if (option == 2)
+                        {
+                            ManipulatorSelection();
+                            break;
+                        }
+                        else
+                        {
+                            MenuHandler.PrintError("Invalid option selected");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MenuHandler.PrintError(ex.Message);
+                    }
+                }
 
             }
             catch (Exception ex)
@@ -114,5 +129,137 @@ namespace FlexyChains_Console
                 Console.WriteLine(ex.Message);
             }
         }
+
+        private void CreateNodesDictionary()
+        {
+            if (_parentNode.ChildNodes.Count == 0)
+                return;
+
+            int nodeIndex = 2;//1 is the parent node
+            _nodesDictionary = new Dictionary<int, XmlNode>();
+            foreach (XmlNode node in _manipulator.GetItems())
+            {
+                _nodesDictionary.Add(nodeIndex, node);
+                nodeIndex++;
+            }
+        }
+
+        private void NodeEditionMenu()
+        {
+            //Console.WriteLine("Select the parent or child node to edit");
+            //Console.WriteLine($"[1]: Parent: {_parentNodeToString}");
+            //foreach (var option in _nodesDictionary)
+            //{
+            //    Console.WriteLine($"[{option.Key}]: {option.Value.OuterXml.Substring(0, 60)} ...");
+            //}
+            //Console.WriteLine("[x]: back");
+
+            //string selection = Console.ReadLine();
+
+            //if (selection == "x")
+            //    EditOrBackMenu();
+            try
+            {
+                MenuHandler.DisplayNodeContent(_parentNodeToString, _nodesDictionary);
+            }
+            catch (Exception ex)
+            {
+                MenuHandler.PrintError(ex.Message);
+            }
+            
+
+            
+            //int.TryParse(selection, out int intSelection);
+
+            //if (intSelection == 1)
+            //{
+            //    Console.Clear();
+            //    EditNode(_parentNode);
+            //}
+
+
+            //if (_nodesDictionary.TryGetValue(intSelection, out XmlNode editingNode))
+            //{
+            //    Console.Clear();
+            //    EditNode(editingNode);
+            //}
+            //else
+            //{
+            //    Console.WriteLine("Invalid selection");
+            //    NodeEditionMenu();
+            //}
+        }
+
+
+        void EditNode(XmlNode node)
+        {
+            // Copiar automáticamente el contenido al portapapeles
+            Clipboard.SetText(node.OuterXml);
+
+            Console.WriteLine("El contenido XML ha sido copiado al portapapeles.");
+            Console.WriteLine("Péguelo aquí (Ctrl + V o Cmd + V), edítelo si lo desea y presione Enter:");
+
+            // Leer la entrada del usuario
+            string input = Console.ReadLine();
+
+            // Si el usuario no escribe nada, se mantiene el valor original
+            string newValue = string.IsNullOrWhiteSpace(input) ? node.OuterXml : input;
+
+            Console.WriteLine($"Valor final: {newValue}");
+            Console.WriteLine("------------------------------");
+            Console.WriteLine("Changes received but not saved  until file is updated");
+            Console.WriteLine("[1]: Edit another node");
+            Console.WriteLine("[2]: Save file and exit");
+
+            int.TryParse(Console.ReadLine(), out int selection);
+            switch (selection)
+            {
+                case 1:
+                    NodeEditionMenu();
+                    break;
+                case 2:
+                    SaveChanges();
+                    break;
+                default:
+                    Console.WriteLine("Invalid selection");
+                    EditNode(node);
+                    break;
+            }
+
+        }
+
+        private void EditOrBackMenu()
+        {
+            Console.WriteLine("[1]: Edit");
+            Console.WriteLine("[2]: Back");
+            int.TryParse(Console.ReadLine(), out int selection);
+
+            Console.Clear();
+
+            switch (selection)
+            {
+                case 1:
+                    NodeEditionMenu();
+                    break;
+                case 2:
+                    ManipulatorSelection();
+                    break;
+                default:
+                    EditOrBackMenu();
+                    break;
+            }
+        }
+
+
+        private void SaveChanges()
+        {
+            Console.Clear();
+            Console.WriteLine("@Todo: saving changes.....");
+        }
+
+
+
+
+
     }
 }
