@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using System.ComponentModel;
 using System.Windows.Forms;
+using FlexyChains_Library.NodeManipulation;
 
 namespace FlexyChains_Console
 {
@@ -17,8 +18,9 @@ namespace FlexyChains_Console
         private INodeManipulator _manipulator;
 
         private XmlNode _parentNode;
-        private String _parentNodeToString;
-        private Dictionary<int, XmlNode> _nodesDictionary;
+        private string _parentNodeToString;
+        private List<XmlNode> _nodesList;
+
 
         public Manipulation() => Start();
 
@@ -86,169 +88,237 @@ namespace FlexyChains_Console
             _parentNode = _manipulator.GetNode();
 
             _parentNodeToString = $"<{_parentNode.Name} {string.Join(" ", _parentNode.Attributes.Cast<XmlAttribute>().Select(a => $"{a.Name}=\"{a.Value}\""))}>";
-            CreateNodesDictionary();
-
+            //CreateNodesList();
             ShowNodeContent();
 
         }
 
         private void ShowNodeContent()
         {
+
             try
             {
-                while(true)
-                {
-                    int option = MenuHandler.DisplayNodeContent(_parentNodeToString, _nodesDictionary);
 
-                    try
+                while (true)
+                {
+                    string selection = MenuHandler.DisplayNodeContent(_parentNodeToString, _manipulator.GetItems());
+
+                    if (selection.Equals("x", StringComparison.OrdinalIgnoreCase)) //faster and optimized comparison
                     {
-                        if (option == 1)
-                        {
-                            NodeEditionMenu();
-                            break;
-                        }
-                        else if (option == 2)
-                        {
-                            ManipulatorSelection();
-                            break;
-                        }
-                        else
-                        {
-                            MenuHandler.PrintError("Invalid option selected");
-                        }
+                        ManipulatorSelection();
+                        break;
                     }
-                    catch (Exception ex)
+
+                    if(selection.Equals("q", StringComparison.OrdinalIgnoreCase)) //faster and optimized comparison
                     {
-                        MenuHandler.PrintError(ex.Message);
+                        Environment.Exit(0);
+                        break;
                     }
+
+                    if(!int.TryParse(selection, out int selectedNodeIndex))
+                    {
+                        //Console.WriteLine($"Invalid option selected: {selectedNodeIndex}");
+                        throw new Exception($"Invalid option selected: {selectedNodeIndex}");
+                    }
+
+                    //if (selectedNodeIndex != 1 && !_nodesList.Contains(_nodesList[selectedNodeIndex - 2]))
+                    if (selectedNodeIndex != 1 && _manipulator.GetItems()[selectedNodeIndex - 2] == null)
+                    {
+                        //Console.WriteLine($"Invalid option selected: {selectedNodeIndex}");
+                        throw new Exception($"Invalid option selected: {selectedNodeIndex}");
+                    }
+
+                    EditNode(_manipulator.GetItems()[selectedNodeIndex - 2]);
+                    break;
+
                 }
 
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
-            }
-        }
-
-        private void CreateNodesDictionary()
-        {
-            if (_parentNode.ChildNodes.Count == 0)
-                return;
-
-            int nodeIndex = 2;//1 is the parent node
-            _nodesDictionary = new Dictionary<int, XmlNode>();
-            foreach (XmlNode node in _manipulator.GetItems())
-            {
-                _nodesDictionary.Add(nodeIndex, node);
-                nodeIndex++;
-            }
-        }
-
-        private void NodeEditionMenu()
-        {
-            //Console.WriteLine("Select the parent or child node to edit");
-            //Console.WriteLine($"[1]: Parent: {_parentNodeToString}");
-            //foreach (var option in _nodesDictionary)
-            //{
-            //    Console.WriteLine($"[{option.Key}]: {option.Value.OuterXml.Substring(0, 60)} ...");
-            //}
-            //Console.WriteLine("[x]: back");
-
-            //string selection = Console.ReadLine();
-
-            //if (selection == "x")
-            //    EditOrBackMenu();
-            try
-            {
-                MenuHandler.DisplayNodeContent(_parentNodeToString, _nodesDictionary);
-            }
-            catch (Exception ex)
-            {
+                
+                Console.Clear();
                 MenuHandler.PrintError(ex.Message);
+                //Console.WriteLine(ex.Message);                
+                ShowNodeContent();
+                throw new Exception($"{ex.Message}");
             }
-            
-
-            
-            //int.TryParse(selection, out int intSelection);
-
-            //if (intSelection == 1)
-            //{
-            //    Console.Clear();
-            //    EditNode(_parentNode);
-            //}
-
-
-            //if (_nodesDictionary.TryGetValue(intSelection, out XmlNode editingNode))
-            //{
-            //    Console.Clear();
-            //    EditNode(editingNode);
-            //}
-            //else
-            //{
-            //    Console.WriteLine("Invalid selection");
-            //    NodeEditionMenu();
-            //}
         }
 
 
-        void EditNode(XmlNode node)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns>Original nodelist or edited if there have been changes</returns>
+        //private List<XmlNode> GetNodeList() => _editedNodesList ?? _nodesList;
+        //private List<XmlNode> GetNodeList() => _nodesList;
+        
+        //private List<XmlNode> GetNodeList() => _manipulator.GetItems().Cast<XmlNode>().ToList();
+
+        //private void CreateNodesList()
+        //{
+        //    _nodesList = new List<XmlNode>();
+
+        //    if (_parentNode.ChildNodes.Count == 0)
+        //        return;
+
+        //    _nodesList = _manipulator.GetItems().Cast<XmlNode>().ToList();
+            
+        //}
+
+        private void EditNode(XmlNode node, string error = null)
         {
-            // Copiar automáticamente el contenido al portapapeles
-            Clipboard.SetText(node.OuterXml);
+            Clipboard.SetText(node.OuterXml); //Copy node content to clipboard
 
-            Console.WriteLine("El contenido XML ha sido copiado al portapapeles.");
-            Console.WriteLine("Péguelo aquí (Ctrl + V o Cmd + V), edítelo si lo desea y presione Enter:");
+            string input = MenuHandler.EditNodeContent(error);
 
-            // Leer la entrada del usuario
-            string input = Console.ReadLine();
-
-            // Si el usuario no escribe nada, se mantiene el valor original
+            // If user does not type, we keep initial value
             string newValue = string.IsNullOrWhiteSpace(input) ? node.OuterXml : input;
 
-            Console.WriteLine($"Valor final: {newValue}");
-            Console.WriteLine("------------------------------");
-            Console.WriteLine("Changes received but not saved  until file is updated");
-            Console.WriteLine("[1]: Edit another node");
-            Console.WriteLine("[2]: Save file and exit");
+            string option = MenuHandler.SaveNodeMenu(newValue);
 
-            int.TryParse(Console.ReadLine(), out int selection);
+            if(option.Equals("x",StringComparison.OrdinalIgnoreCase))
+            {
+                ShowNodeContent();
+            }
+            
+            int.TryParse(option, out int selection);
             switch (selection)
             {
                 case 1:
-                    NodeEditionMenu();
+                    SaveNode(node, newValue);
+                    _manipulator.AddDocument(_fileManager.Document);//Refresh nodes in INodeManipulator
+                    ShowNodeContent();
                     break;
                 case 2:
                     SaveChanges();
                     break;
                 default:
                     Console.WriteLine("Invalid selection");
-                    EditNode(node);
+                    //EditNode(node);
                     break;
             }
 
         }
 
-        private void EditOrBackMenu()
+        private void SaveNode(XmlNode node, string newValue)
         {
-            Console.WriteLine("[1]: Edit");
-            Console.WriteLine("[2]: Back");
-            int.TryParse(Console.ReadLine(), out int selection);
-
-            Console.Clear();
-
-            switch (selection)
+            if (!NodeEditor.IsValidXML(newValue))
             {
-                case 1:
-                    NodeEditionMenu();
-                    break;
-                case 2:
-                    ManipulatorSelection();
-                    break;
-                default:
-                    EditOrBackMenu();
-                    break;
+                EditNode(node, "Received value is not valid XML. Discarded");
             }
+            else
+            {
+                NodeEditor.UpdateNodeContent(newValue, node, _fileManager.Document);
+                _manipulator.AddDocument(_fileManager.Document);
+            }
+                
         }
+        
+
+        //private void NodeEditionMenu()
+        //{
+        //    try
+        //    {
+        //        string selection = MenuHandler.DisplayNodeContent(_parentNodeToString, _nodesList);
+
+        //        switch (selection.ToLower())
+        //        {
+        //            case "x":
+
+        //                break;
+        //        }
+
+        //        int.TryParse(Console.ReadLine(), out int selectedNodeIndex);
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MenuHandler.PrintError(ex.Message);
+        //    }
+
+
+
+        //    //int.TryParse(selection, out int intSelection);
+
+        //    //if (intSelection == 1)
+        //    //{
+        //    //    Console.Clear();
+        //    //    EditNode(_parentNode);
+        //    //}
+
+
+        //    //if (_nodesDictionary.TryGetValue(intSelection, out XmlNode editingNode))
+        //    //{
+        //    //    Console.Clear();
+        //    //    EditNode(editingNode);
+        //    //}
+        //    //else
+        //    //{
+        //    //    Console.WriteLine("Invalid selection");
+        //    //    NodeEditionMenu();
+        //    //}
+        //}
+
+
+        //void EditNode(XmlNode node)
+        //{
+        //    // Copiar automáticamente el contenido al portapapeles
+        //    Clipboard.SetText(node.OuterXml);
+
+        //    Console.WriteLine("El contenido XML ha sido copiado al portapapeles.");
+        //    Console.WriteLine("Péguelo aquí (Ctrl + V o Cmd + V), edítelo si lo desea y presione Enter:");
+
+        //    // Leer la entrada del usuario
+        //    string input = Console.ReadLine();
+
+        //    // Si el usuario no escribe nada, se mantiene el valor original
+        //    string newValue = string.IsNullOrWhiteSpace(input) ? node.OuterXml : input;
+
+        //    Console.WriteLine($"Valor final: {newValue}");
+        //    Console.WriteLine("------------------------------");
+        //    Console.WriteLine("Changes received but not saved  until file is updated");
+        //    Console.WriteLine("[1]: Edit another node");
+        //    Console.WriteLine("[2]: Save file and exit");
+
+        //    int.TryParse(Console.ReadLine(), out int selection);
+        //    switch (selection)
+        //    {
+        //        case 1:
+        //            NodeEditionMenu();
+        //            break;
+        //        case 2:
+        //            SaveChanges();
+        //            break;
+        //        default:
+        //            Console.WriteLine("Invalid selection");
+        //            EditNode(node);
+        //            break;
+        //    }
+
+        //}
+
+        //private void EditOrBackMenu()
+        //{
+        //    Console.WriteLine("[1]: Edit");
+        //    Console.WriteLine("[2]: Back");
+        //    int.TryParse(Console.ReadLine(), out int selection);
+
+        //    Console.Clear();
+
+        //    switch (selection)
+        //    {
+        //        case 1:
+        //            NodeEditionMenu();
+        //            break;
+        //        case 2:
+        //            ManipulatorSelection();
+        //            break;
+        //        default:
+        //            EditOrBackMenu();
+        //            break;
+        //    }
+        //}
 
 
         private void SaveChanges()

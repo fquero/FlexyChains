@@ -1,9 +1,6 @@
 ﻿using FlexyChains_Library;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace FlexyChains_Console
@@ -81,35 +78,39 @@ namespace FlexyChains_Console
             return selectedOptionIndex;
         }
 
-        internal static int DisplayNodeContent(string parentNodeString, Dictionary<int, XmlNode> nodesDictionary = null)
+        internal static string DisplayNodeContent(string parentNodeString, XmlNodeList nodesList = null)
         {
             try
             {
                 PrintTitle("SHOWING NODE CONTENT", true);
 
                 Console.ForegroundColor = ConsoleColor.Magenta;
-                Console.Write("Parent: ");
+                Console.Write("[1] Parent: ");
                 Console.ResetColor();
                 Console.WriteLine(parentNodeString);
                 PrintSeparator(ConsoleColor.Magenta);
                 
                 
-                if (nodesDictionary != null)
+                if (nodesList != null)
                 {
-                    for(int i = 2; i < nodesDictionary.Count+2; i++) 
+                    for(int i = 0; i < nodesList.Count; i++) 
                     {
-                        Console.WriteLine(nodesDictionary[i].OuterXml);
+                        Console.ForegroundColor= ConsoleColor.Magenta;
+                        Console.Write($"[{i+2}] ");//<= 1 Parent node
+                        Console.ResetColor();
+                        Console.WriteLine(nodesList[i].OuterXml);
                         PrintSeparator(ConsoleColor.Magenta);
                     }
                 }
 
-                Console.WriteLine("");
-                Console.WriteLine("[1]: Edit");
-                Console.WriteLine("[2]: Back");
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.WriteLine("Type node number to edit it");
+                Console.ResetColor();
+                PrintSeparator(ConsoleColor.Magenta, 30);
+                Console.WriteLine("[x]: Back");
+                Console.WriteLine("[q]: Quit");
                 
-                int.TryParse(Console.ReadLine(), out int selection);
-                return selection;
-
+                return Console.ReadLine();
 
             }
             catch (Exception ex)
@@ -117,6 +118,36 @@ namespace FlexyChains_Console
                 throw new InvalidOperationException(ex.Message);
             }
         }
+
+        internal static string SaveNodeMenu(string nodeValue)
+        {
+            PrintSeparator(ConsoleColor.Green,40);
+            Console.WriteLine($"New value:");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine(nodeValue);
+            PrintSeparator();
+            Console.WriteLine("Changes received but not saved  until file is updated");
+            Console.WriteLine("[1]: Save and edit another node");
+            Console.WriteLine("[2]: Save and update web.config");
+            Console.WriteLine("[x]: Discard changes");
+            return Console.ReadLine();
+        }
+
+        internal static string EditNodeContent(string error = null)
+        {
+            if(error != null)
+                PrintError(error);
+
+            PrintTitle("NODE EDITION",true);
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine("Node content copied to clipboard.");
+            Console.WriteLine("Paste it here (Ctrl + V), edit at will and press Enter:");
+            Console.ResetColor();
+            PrintSeparator(ConsoleColor.Magenta);
+
+            return Console.ReadLine();
+        }
+
 
         private static void EditOrBackMenu()
         {
@@ -126,6 +157,8 @@ namespace FlexyChains_Console
                 Console.WriteLine("[2]: Back");
             
         }
+
+
 
         //internal static int SelectItemToEdit(string parentNodeString)
         //{
