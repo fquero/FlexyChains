@@ -17,9 +17,6 @@ namespace FlexyChains_Console
         private FileManager _fileManager;
         private INodeManipulator _manipulator;
 
-        private XmlNode _parentNode;
-        private string _parentNodeToString;
-        private List<XmlNode> _nodesList;
 
 
         public Manipulation() => Start();
@@ -58,7 +55,11 @@ namespace FlexyChains_Console
 
             try
             {
-                NodeManipulatorFactory.GetManipulationIndex().TryGetValue(selectedOptionIndex, out ManipulationOption selectedOption);
+                if (!NodeManipulatorFactory.GetManipulationIndex().TryGetValue(selectedOptionIndex, out ManipulationOption selectedOption))
+                {
+                    throw new Exception("Invalid option selected");
+                }
+                
                 _manipulator = NodeManipulatorFactory.Create(selectedOption.ManipulatorType, selectedOption.Arguments);
                 _manipulator.AddDocument(_fileManager.Document);
                 StartManipulation();
@@ -66,13 +67,11 @@ namespace FlexyChains_Console
             catch (Exception ex)
             {
                 Console.Clear();
-                throw new Exception(ex.Message);
-            }
-            finally
-            {
+                MenuHandler.PrintError(ex.Message);
+                Console.WriteLine("Run as administrator to get access to RSA keys");
+                Console.WriteLine("Restarting...");
                 Start();
-            }
-            
+            }            
 
         }
 
@@ -85,9 +84,9 @@ namespace FlexyChains_Console
             {
                 _manipulator.DecryptNode();
             }
-            _parentNode = _manipulator.GetNode();
 
-            _parentNodeToString = $"<{_parentNode.Name} {string.Join(" ", _parentNode.Attributes.Cast<XmlAttribute>().Select(a => $"{a.Name}=\"{a.Value}\""))}>";
+
+            
             //CreateNodesList();
             ShowNodeContent();
 
@@ -101,7 +100,7 @@ namespace FlexyChains_Console
 
                 while (true)
                 {
-                    string selection = MenuHandler.DisplayNodeContent(_parentNodeToString, _manipulator.GetItems());
+                    string selection = MenuHandler.DisplayNodeContent(_manipulator.ParentNodeToString, _manipulator.GetItems());
 
                     if (selection.Equals("x", StringComparison.OrdinalIgnoreCase)) //faster and optimized comparison
                     {

@@ -65,10 +65,9 @@
     <Compile Include="Interfaces\INodeManipulator.cs" />
     <Compile Include="Interfaces\IProtectionProvider.cs" />
     <Compile Include="NodeManipulation\NodeEditor.cs" />
-    <Compile Include="NodeManipulation\NodeEmailSettings.cs" />
     <Compile Include="NodeManipulatorFactory.cs" />
     <Compile Include="NodeManipulation\NodeBase.cs" />
-    <Compile Include="NodeManipulation\NodeConnectionStrings.cs" />
+    <Compile Include="NodeManipulation\GenericNodeManipulator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProtectionProviders\RsaProtector.cs" />
   </ItemGroup>

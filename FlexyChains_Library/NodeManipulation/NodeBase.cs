@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FlexyChains_Library.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,35 +9,48 @@ using System.Xml.Linq;
 
 namespace FlexyChains_Library
 {
-    public abstract class NodeBase
+    public abstract class NodeBase : INodeManipulator
     {
-        protected XmlDocument _document;
-        protected XmlNode _node;
-        protected XmlNodeList _items;
-        protected string _nodeName;
-        protected string _itemName;
-        
-        protected NodeBase(string nodeName, string itemName = null)
+        public abstract void DecryptNode();
+        public XmlDocument XmlDocument { get; private set; }
+        public XmlNode ParentNode { get; protected set; }
+        public XmlNodeList ChildNodesList { get; protected set; }
+        public string ParentNodeToString { get; private set; }
+        public bool IsInitialParentNodeEncrypted { get; private set; }
+        public IProtectionProvider ProtectionProvider { get; protected set; }
+
+        protected string _parentNodeName;
+        protected string _childNodeName;
+
+        protected NodeBase(string parentNodeName, string childNodeName = null)
         {
-            _nodeName = nodeName;
-            _itemName = itemName;
+            _parentNodeName = parentNodeName;
+            _childNodeName = childNodeName;
         }
 
         public void AddDocument(XmlDocument document)
         {
-            _document = document;
-            _node = _document.SelectSingleNode(_nodeName);
+            XmlDocument = document;
+            ParentNode = XmlDocument.SelectSingleNode(_parentNodeName);
 
-            if (_node == null)
+            if (ParentNode == null)
             {
-                throw new InvalidOperationException($"Can't find node {_nodeName}");
+                throw new InvalidOperationException($"Can't find node {_parentNodeName}");
             }
 
-            if (_itemName != null)
+            ParentNodeToString = $"<{ParentNode.Name} {string.Join(" ", ParentNode.Attributes.Cast<XmlAttribute>().Select(a => $"{a.Name}=\"{a.Value}\""))}>";
+            
+            if(IsNodeEncrypted())
+            {
+                IsInitialParentNodeEncrypted = true;
+                
+            }
+
+            if (_childNodeName != null)
             {
                 try
                 {
-                    _items = _node.SelectNodes(_itemName);
+                    ChildNodesList = ParentNode.SelectNodes(_childNodeName);
                 }
                 catch (Exception ex)
                 {
@@ -45,7 +59,7 @@ namespace FlexyChains_Library
             }
         }
                 
-        public XmlNode GetNode() => _node;
+        public XmlNode GetNode() => ParentNode;
        
         public XmlNodeList GetItems()
         {
@@ -55,14 +69,14 @@ namespace FlexyChains_Library
             }
 
 
-            if (_items == null || _items.Count == 0)
+            if (ChildNodesList == null || ChildNodesList.Count == 0)
             {
                 throw new InvalidOperationException("No items found");
             }
-            return _items;
+            return ChildNodesList;
         }
 
-        public bool IsNodeEncrypted() => _node.Attributes["configProtectionProvider"] != null;
+        public bool IsNodeEncrypted() => ParentNode.Attributes["configProtectionProvider"] != null;
 
 
     }

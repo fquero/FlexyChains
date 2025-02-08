@@ -10,11 +10,10 @@ using System.Xml.Linq;
 
 namespace FlexyChains_Library
 {
-    public class NodeConnectionStrings : NodeBase, INodeManipulator
+    public class GenericNodeManipulator : NodeBase
     {
-        public IProtectionProvider ProtectionProvider { get;  }
-
-        public NodeConnectionStrings(
+        
+        public GenericNodeManipulator(
             string nodeName,
             string elementName
             ) : base(nodeName, elementName)
@@ -22,13 +21,13 @@ namespace FlexyChains_Library
             ProtectionProvider = new RsaProtector();
         }
 
-        public void DecryptNode()
+        public override void DecryptNode()
         {
             try
             {
 
-                _node = ProtectionProvider.Desencrypt(_node);
-                _items = _node.SelectNodes(_itemName);
+                ParentNode = ProtectionProvider.Desencrypt(ParentNode);
+                ChildNodesList = ParentNode.SelectNodes(_childNodeName);
 
             }
             catch (Exception ex)

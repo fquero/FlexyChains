@@ -10,6 +10,11 @@ namespace FlexyChains_Library.Interfaces
 {
     public interface INodeManipulator
     {
+        XmlDocument XmlDocument { get; }
+        XmlNode ParentNode { get; }
+        XmlNodeList ChildNodesList { get; }
+        string ParentNodeToString { get; }
+        bool IsInitialParentNodeEncrypted { get; }
         IProtectionProvider ProtectionProvider { get; }
 
         void AddDocument(XmlDocument document);
@@ -18,6 +23,6 @@ namespace FlexyChains_Library.Interfaces
         XmlNodeList GetItems();
 
         void DecryptNode();
-        XElement EditItem(XElement item);
+        
     }
 }

@@ -30,7 +30,7 @@ namespace FlexyChains_Library
                     new ManipulationOption
                     { 
                         Name =  "connectionStrings",
-                        ManipulatorType = typeof(NodeConnectionStrings),
+                        ManipulatorType = typeof(GenericNodeManipulator),
                         Arguments = new object[] { "//connectionStrings", "add"}
                      } 
                 },
@@ -39,7 +39,7 @@ namespace FlexyChains_Library
                     new ManipulationOption
                     { 
                         Name =  "mailSettings",
-                        ManipulatorType = typeof(NodeConnectionStrings),
+                        ManipulatorType = typeof(GenericNodeManipulator),
                         Arguments = new object[] { "//smtp", "network"}
                      } 
                 }
@@ -47,19 +47,6 @@ namespace FlexyChains_Library
             };
 
         }
-
-        //public static INodeManipulator NewNodeManipulator(Type manipulatorType, XmlDocument document)
-        //{
-        //    if(!typeof(INodeManipulator).IsAssignableFrom(manipulatorType))
-        //    {
-        //        throw new ArgumentException("Received Type does not implement INodeManipulator", nameof(manipulatorType));
-        //    }
-
-        //    var manipulator = (INodeManipulator)Activator.CreateInstance(manipulatorType) ?? throw new ArgumentException($"Could not create {manipulatorType.FullName} instance.");
-        //    manipulator.AddDocument(document);
-        //    return manipulator;            
-
-        //}
 
         public static INodeManipulator Create(Type manipulatorType, params object[] additionalArgs)
         {
