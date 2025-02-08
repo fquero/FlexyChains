@@ -18,9 +18,10 @@ namespace FlexyChains_Library
         public XmlNodeList ChildNodesList { get; protected set; }
         public string ParentNodeToString { get; private set; }
         public bool IsInitialParentNodeEncrypted { get; private set; }
+        public bool IsNodeModified { get; protected set; }
         public IProtectionProvider ProtectionProvider { get; protected set; }
 
-        protected string _parentNodeName;
+        private string _parentNodeName;
         protected string _childNodeName;
 
         protected NodeBase(string parentNodeName, string childNodeName = null)
@@ -66,22 +67,53 @@ namespace FlexyChains_Library
                 
         public XmlNode GetNode() => ParentNode;
        
-        public XmlNodeList GetItems()
+        public XmlNodeList GetChildNodes()
         {
             if(IsNodeEncrypted())
-            {
                 throw new InvalidOperationException("Node is encrypted! Desencrypt it first");
-            }
-
-
-            if (ChildNodesList == null || ChildNodesList.Count == 0)
-            {
+            
+            if (ChildNodesList.Count == 0)
                 throw new InvalidOperationException("No items found");
-            }
-            return ChildNodesList;
+            
+            return ParentNode.SelectNodes(_childNodeName);
         }
 
         public bool IsNodeEncrypted() => ParentNode.Attributes["configProtectionProvider"] != null;
+
+
+        public void UpdateNodeContent(string newNodeContent, XmlNode oldNode, bool isChild = true)
+        {
+            if (oldNode == null || XmlDocument == null)
+                throw new ArgumentNullException("oldNode or document cannot be null");
+
+            if (oldNode.OwnerDocument != XmlDocument)
+                throw new InvalidOperationException("oldNode belongs to a different document");
+
+            //Parse new content to get full elmenet instead of using innerXml
+            XmlDocumentFragment fragment = XmlDocument.CreateDocumentFragment();
+            fragment.InnerXml = newNodeContent;
+
+            if (fragment.ChildNodes.Count == 1 && fragment.FirstChild.NodeType == XmlNodeType.Element)
+            {
+                // Asume new content is a full element
+                XmlNode newNode = fragment.FirstChild;
+
+                XmlNode parent = oldNode.ParentNode;
+                if (parent == null)
+                    throw new InvalidOperationException("oldNode has no parent and cannot be replaced");
+
+                // Replace original node with new one (importing if necessary)
+                parent.ReplaceChild(XmlDocument.ImportNode(newNode, true), oldNode);
+            }
+            else
+            {
+                // If fragment is not a single element, update inner XML directly.
+                oldNode.InnerXml = newNodeContent;
+            }
+
+            IsNodeModified = true;
+        }
+    
 
 
     }

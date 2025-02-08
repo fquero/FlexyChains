@@ -16,14 +16,18 @@ namespace FlexyChains_Library.Interfaces
         XmlNodeList ChildNodesList { get; }
         string ParentNodeToString { get; }
         bool IsInitialParentNodeEncrypted { get; }
+
+        bool IsNodeModified { get; }
         IProtectionProvider ProtectionProvider { get; }
 
         void AddDocument(XmlDocument document);
         XmlNode GetNode();
         bool IsNodeEncrypted();
-        XmlNodeList GetItems();
+        XmlNodeList GetChildNodes();
 
         void DecryptNode();
-        
+
+        void UpdateNodeContent(string newNodeContent, XmlNode oldNode, bool isChild = true);
+
     }
 }

@@ -25,10 +25,19 @@ namespace FlexyChains_Library
         {
             try
             {
+                // Desencriptamos y obtenemos el nodo desencriptado.
+                XmlNode decryptedNode = ProtectionProvider.Desencrypt(ParentNode);
 
-                ParentNode = ProtectionProvider.Desencrypt(ParentNode);
+                // Verificamos si el nodo desencriptado pertenece al mismo documento.
+                // Si no es así, lo importamos al documento original.
+                if (decryptedNode.OwnerDocument != XmlDocument)
+                {
+                    decryptedNode = XmlDocument.ImportNode(decryptedNode, true);
+                }
+
+                // Asignamos el nodo desencriptado (ya importado) como nuevo ParentNode.
+                ParentNode = decryptedNode;
                 ChildNodesList = ParentNode.SelectNodes(_childNodeName);
-
             }
             catch (Exception ex)
             {
@@ -37,16 +46,14 @@ namespace FlexyChains_Library
         }
 
 
-        
+
         public XElement EditItem(XElement item)
         {
             throw new NotImplementedException();
         }
 
-        
 
         
 
-        
     }
 }

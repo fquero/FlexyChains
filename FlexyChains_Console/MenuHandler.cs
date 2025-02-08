@@ -34,8 +34,12 @@ namespace FlexyChains_Console
 
         }
 
-        internal static void PrintError(string errorMessage)
+        internal static void PrintError(string errorMessage, bool clear = false)
         {
+            if(clear)
+            {
+                Console.Clear();
+            }
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"ERROR -> {errorMessage}");
         }
@@ -78,11 +82,11 @@ namespace FlexyChains_Console
             return selectedOptionIndex;
         }
 
-        internal static string DisplayNodeContent(string parentNodeString, XmlNodeList nodesList = null)
+        internal static string DisplayNodeContent(string parentNodeString, XmlNodeList nodesList = null, bool IsNodeEdited = false)
         {
             try
             {
-                PrintTitle("SHOWING NODE CONTENT", true);
+                PrintTitle("SHOWING NODE CONTENT");
 
                 Console.ForegroundColor = ConsoleColor.Magenta;
                 Console.Write("[1] Parent: ");
@@ -103,13 +107,24 @@ namespace FlexyChains_Console
                     }
                 }
 
-                Console.ForegroundColor = ConsoleColor.Magenta;
-                Console.WriteLine("Type node number to edit it");
-                Console.ResetColor();
+                //Console.ForegroundColor = ConsoleColor.Magenta;
+                //Console.WriteLine("Type node number to edit it");
+                //Console.ResetColor();
                 PrintSeparator(ConsoleColor.Magenta, 30);
-                Console.WriteLine("[x]: Back");
+
+                if (IsNodeEdited)
+                {
+                    Console.WriteLine("[s]: Save changes to file");
+                    Console.WriteLine("[x]: Discard changes");
+                }
+                else
+                {
+                    Console.WriteLine("[x]: Back");
+                }
+
                 Console.WriteLine("[q]: Quit");
-                
+
+                Console.Write("[Node number to edit] : ");
                 return Console.ReadLine();
 
             }
@@ -127,9 +142,9 @@ namespace FlexyChains_Console
             Console.WriteLine(nodeValue);
             PrintSeparator();
             Console.WriteLine("Changes received but not saved  until file is updated");
-            Console.WriteLine("[1]: Save and edit another node");
-            Console.WriteLine("[2]: Save and update web.config");
-            Console.WriteLine("[x]: Discard changes");
+            Console.WriteLine("[n]: Edit another node");
+            Console.WriteLine("[s]: Save changes to file");
+            Console.WriteLine("[x]: Discard changes and go back");
             return Console.ReadLine();
         }
 
