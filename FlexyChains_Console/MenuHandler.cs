@@ -37,7 +37,7 @@ namespace FlexyChains_Console
         internal static void PrintError(string errorMessage)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(errorMessage);
+            Console.WriteLine($"ERROR -> {errorMessage}");
         }
 
         internal static string SetFilePath()

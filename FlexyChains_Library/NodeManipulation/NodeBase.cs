@@ -14,6 +14,7 @@ namespace FlexyChains_Library
         public abstract void DecryptNode();
         public XmlDocument XmlDocument { get; private set; }
         public XmlNode ParentNode { get; protected set; }
+        public XmlNode OriginalParentNode { get; protected set; }
         public XmlNodeList ChildNodesList { get; protected set; }
         public string ParentNodeToString { get; private set; }
         public bool IsInitialParentNodeEncrypted { get; private set; }
@@ -31,20 +32,24 @@ namespace FlexyChains_Library
         public void AddDocument(XmlDocument document)
         {
             XmlDocument = document;
-            ParentNode = XmlDocument.SelectSingleNode(_parentNodeName);
+            OriginalParentNode = XmlDocument.SelectSingleNode(_parentNodeName); //Keep original node
+            ParentNode = XmlDocument.SelectSingleNode(_parentNodeName); // Keep a node copy to work with
 
             if (ParentNode == null)
             {
                 throw new InvalidOperationException($"Can't find node {_parentNodeName}");
             }
 
-            ParentNodeToString = $"<{ParentNode.Name} {string.Join(" ", ParentNode.Attributes.Cast<XmlAttribute>().Select(a => $"{a.Name}=\"{a.Value}\""))}>";
-            
             if(IsNodeEncrypted())
             {
                 IsInitialParentNodeEncrypted = true;
-                
+                DecryptNode();
+            } else
+            {
+                IsInitialParentNodeEncrypted = false;
             }
+
+            ParentNodeToString = $"<{ParentNode.Name} {string.Join(" ", ParentNode.Attributes.Cast<XmlAttribute>().Select(a => $"{a.Name}=\"{a.Value}\""))}>";
 
             if (_childNodeName != null)
             {

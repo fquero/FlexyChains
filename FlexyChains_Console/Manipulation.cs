@@ -138,9 +138,7 @@ namespace FlexyChains_Console
                 
                 Console.Clear();
                 MenuHandler.PrintError(ex.Message);
-                //Console.WriteLine(ex.Message);                
-                ShowNodeContent();
-                throw new Exception($"{ex.Message}");
+                Start();
             }
         }
 
