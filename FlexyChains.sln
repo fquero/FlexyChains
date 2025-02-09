@@ -5,7 +5,7 @@ VisualStudioVersion = 17.12.35527.113
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexyChains_Library", "FlexyChains_Library\FlexyChains_Library.csproj", "{5924C836-7A8D-4C91-ADA7-56962541F751}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexyChains_Console", "FlexyChains_Console\FlexyChains_Console.csproj", "{60433E1A-59FA-4AE8-9140-144B53073391}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexyChains", "FlexyChains_Console\FlexyChains.csproj", "{60433E1A-59FA-4AE8-9140-144B53073391}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FlexyChains_GUI", "FlexyChains_GUI\FlexyChains_GUI.csproj", "{D45D404A-F115-4809-920F-5568750A8799}"
 EndProject

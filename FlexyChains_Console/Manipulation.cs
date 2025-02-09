@@ -10,7 +10,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using FlexyChains_Library.NodeManipulation;
 
-namespace FlexyChains_Console
+namespace FlexyChains
 {
     internal class Manipulation
     {

@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace FlexyChains_Console
+namespace FlexyChains
 {
     internal class Program
     {

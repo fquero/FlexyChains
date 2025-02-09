@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{60433E1A-59FA-4AE8-9140-144B53073391}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>FlexyChains_Console</RootNamespace>
-    <AssemblyName>FlexyChains_Console</AssemblyName>
+    <RootNamespace>FlexyChains</RootNamespace>
+    <AssemblyName>FlexyChains</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

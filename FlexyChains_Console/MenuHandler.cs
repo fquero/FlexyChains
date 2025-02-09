@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 
-namespace FlexyChains_Console
+namespace FlexyChains
 {
     internal class MenuHandler
     {
