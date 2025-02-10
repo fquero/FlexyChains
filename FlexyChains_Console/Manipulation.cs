@@ -160,6 +160,7 @@ namespace FlexyChains
                     ShowNodeContent();
                     break;
                 case "s":
+                    SaveNode(node, newValue, isChild);
                     SaveChanges();
                     break;
                 case "x":
@@ -201,6 +202,12 @@ namespace FlexyChains
         {
             Console.Clear();
             Console.WriteLine("@Todo: saving changes to file.....");
+
+            Console.WriteLine(_manipulator.ParentNode.OuterXml);
+            //foreach(XmlNode childi in _manipulator.ChildNodesList)
+            //{
+            //    Console.WriteLine(childi.OuterXml);
+            //}
         }
 
 

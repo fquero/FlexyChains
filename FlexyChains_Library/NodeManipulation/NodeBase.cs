@@ -52,17 +52,17 @@ namespace FlexyChains_Library
 
             ParentNodeToString = $"<{ParentNode.Name} {string.Join(" ", ParentNode.Attributes.Cast<XmlAttribute>().Select(a => $"{a.Name}=\"{a.Value}\""))}>";
 
-            if (_childNodeName != null)
-            {
-                try
-                {
-                    ChildNodesList = ParentNode.SelectNodes(_childNodeName);
-                }
-                catch (Exception ex)
-                {
-                    throw new InvalidOperationException(ex.Message);
-                }
-            }
+            //if (_childNodeName != null)
+            //{
+            //    try
+            //    {
+            //        ChildNodesList = ParentNode.SelectNodes(_childNodeName);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        throw new InvalidOperationException(ex.Message);
+            //    }
+            //}
         }
                 
         public XmlNode GetNode() => ParentNode;
