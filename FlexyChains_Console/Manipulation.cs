@@ -116,7 +116,7 @@ namespace FlexyChains
                     if(selectedNodeIndex == 1)
                     {
                         //Parent
-                        EditNode(_manipulator.GetChildNodes()[selectedNodeIndex - 2], false);
+                        EditNode(_manipulator.ParentNode, false);
                     } else
                     {
                         //Child
@@ -143,7 +143,7 @@ namespace FlexyChains
                 Clipboard.SetText(node.OuterXml); //Copy node content to clipboard
             } else {
 
-                Clipboard.SetText(_manipulator.ParentNode.InnerXml); //Copy node content to clipboard
+                Clipboard.SetText(_manipulator.ParentNodeToString); //Copy node content to clipboard
             }
 
             string input = MenuHandler.EditNodeContent(error);
@@ -176,7 +176,7 @@ namespace FlexyChains
 
         private void SaveNode(XmlNode node, string newValue, bool isChild)
         {
-            if (!NodeEditor.IsValidXML(newValue))
+            if (!NodeEditor.IsValidXML(newValue, isChild))
             {
                 throw new FormatException("Received value is not valid XML. Discarded");
             }

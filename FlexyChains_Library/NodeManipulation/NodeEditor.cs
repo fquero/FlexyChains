@@ -15,8 +15,18 @@ namespace FlexyChains_Library.NodeManipulation
         /// </summary>
         /// <param name="xmlContent"></param>
         /// <returns></returns>
-        public static bool IsValidXML(string xmlContent)
+        public static bool IsValidXML(string xmlContent, bool isChild)
         {
+            //Adds closing tag if it's not present because is parent node
+            if (!isChild)
+            {
+                string tagName = xmlContent.Split(new[] { ' ', '>' }, StringSplitOptions.RemoveEmptyEntries)[0].Trim('<');
+                if (!xmlContent.Contains("</"))
+                {
+                    xmlContent += $"</{tagName}>";
+                }
+            }
+
             try
             {
                 XmlDocument doc = new XmlDocument();
