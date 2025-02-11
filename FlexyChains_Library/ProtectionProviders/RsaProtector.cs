@@ -1,6 +1,7 @@
 ﻿using FlexyChains_Library.Interfaces;
 using System;
 using System.Configuration;
+using System.Web.Configuration;
 using System.Xml;
 
 namespace FlexyChains_Library.ProtectionProviders
@@ -48,9 +49,64 @@ namespace FlexyChains_Library.ProtectionProviders
             }
         }
 
-        public bool Encrypt(System.Xml.Linq.XElement node)
+
+        public void Encrypt(XmlNode node)
         {
-            throw new NotImplementedException();
+            if (node == null)
+            {
+                throw new ArgumentNullException(nameof(node));
+            }
+
+            try
+            {
+                Console.WriteLine("Nodo antes de encriptar:");
+                Console.WriteLine(node.OuterXml);
+
+                if (_provider == null)
+                {
+                    throw new Exception("El proveedor de encriptación no está inicializado.");
+                }
+
+                // Aplicar la encriptación directamente al nodo
+                XmlNode encryptedNode = _provider.Encrypt(node);
+                if (encryptedNode == null)
+                {
+                    throw new Exception("El proveedor de encriptación devolvió un nodo nulo.");
+                }
+
+                // Crear un nuevo nodo que preserve el nombre original
+                XmlDocument doc = node.OwnerDocument;
+                XmlElement newParentNode = doc.CreateElement(node.Name);
+                newParentNode.SetAttribute("configProtectionProvider", "RsaProtectedConfigurationProvider");
+
+                // Importar el nodo encriptado dentro del nuevo nodo
+                XmlNode importedEncryptedNode = doc.ImportNode(encryptedNode, true);
+                newParentNode.AppendChild(importedEncryptedNode);
+
+                // Reemplazar el nodo original con el nuevo nodo estructurado
+                XmlNode parent = node.ParentNode;
+                if (parent != null)
+                {
+                    parent.ReplaceChild(newParentNode, node);
+                }
+                else
+                {
+                    throw new Exception("El nodo original no tiene un nodo padre válido.");
+                }
+
+                Console.WriteLine("Nodo después de encriptar:");
+                Console.WriteLine(newParentNode.OuterXml);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en la encriptación: {ex.Message}");
+                throw;
+            }
         }
+
+
+
+
+
     }
 }

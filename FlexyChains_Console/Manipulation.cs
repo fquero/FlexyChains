@@ -199,19 +199,31 @@ namespace FlexyChains
             
                 
         }
-        
+
 
         private void SaveChanges()
         {
             Console.Clear();
-            Console.WriteLine("@Todo: saving changes to file.....");
+            Console.WriteLine("@Todo: verifying encryption in console...");
 
-            Console.WriteLine(_manipulator.ParentNode.OuterXml);
-            //foreach(XmlNode childi in _manipulator.ChildNodesList)
-            //{
-            //    Console.WriteLine(childi.OuterXml);
-            //}
+            if (_manipulator.IsNodeEncrypted())
+            {
+                Console.WriteLine("El nodo ya está encriptado. No se realizará la operación.");
+                return;
+            }
+
+            try
+            {
+                // Encriptar el nodo
+                _manipulator.EncryptNode();
+                
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error durante la encriptación: {ex.Message}");
+            }
         }
+
 
 
 

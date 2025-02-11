@@ -29,5 +29,7 @@ namespace FlexyChains_Library.Interfaces
 
         void UpdateNodeContent(string newNodeContent, XmlNode oldNode, bool isChild = true);
 
+        void EncryptNode();
+
     }
 }

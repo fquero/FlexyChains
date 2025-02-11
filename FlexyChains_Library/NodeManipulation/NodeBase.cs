@@ -191,7 +191,25 @@ namespace FlexyChains_Library
             ParentNodeToString = $"<{ParentNode.Name} {string.Join(" ", ParentNode.Attributes.Cast<XmlAttribute>().Select(a => $"{a.Name}=\"{a.Value}\""))}>";
         }
 
-    }
+        public void EncryptNode()
+        {
+            try
+            {
+                if (ProtectionProvider == null)
+                    throw new InvalidOperationException("ProtectionProvider is not set");
+                if (IsNodeEncrypted())
+                    throw new InvalidOperationException("Node is already encrypted");
+
+                ProtectionProvider.Encrypt(ParentNode);
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw new InvalidOperationException($"Couldn't encrypt: {ex.Message}", ex);
+
+            }
+
+        }
 
 
     }
+}
