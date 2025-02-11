@@ -7,7 +7,7 @@ namespace FlexyChains
 {
     internal class MenuHandler
     {
-        private static void PrintTitle(string title, bool clear = false)
+        internal static void PrintTitle(string title, bool clear = false)
         {
             if (clear)
             {
@@ -163,31 +163,6 @@ namespace FlexyChains
             return Console.ReadLine();
         }
 
-
-        private static void EditOrBackMenu()
-        {
-            
-                Console.WriteLine("");
-                Console.WriteLine("[1]: Edit");
-                Console.WriteLine("[2]: Back");
-            
-        }
-
-
-
-        //internal static int SelectItemToEdit(string parentNodeString)
-        //{
-        //    PrintTitle("Select the parent or child node to edit", true);
-        //    Console.WriteLine($"[1]: Parent: {parentNodeString}");
-        //    foreach (var option in _nodesDictionary)
-        //    {
-        //        Console.WriteLine($"[{option.Key}]: {option.Value.OuterXml.Substring(0, 60)} ...");
-        //    }
-        //    Console.WriteLine("[x]: back");
-
-        //    string selection = Console.ReadLine();
-
-        //}
     }
 
     

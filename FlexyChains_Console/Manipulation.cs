@@ -216,8 +216,14 @@ namespace FlexyChains
             {
                 // Encriptar el nodo
                 _manipulator.EncryptNode();
-                Console.WriteLine("TACHAAAAAAN:");
-                Console.WriteLine(_manipulator.ParentNode.OuterXml);
+                //Actualizar el archivo
+                _fileManager.SaveChanges(_manipulator.XmlDocument);
+
+                MenuHandler.PrintTitle("File updated and encypted :)", true);
+                Console.WriteLine(_fileManager.FilePath);
+                Console.WriteLine("Press any key to restart");
+                Console.ReadKey();
+                Start();
 
             }
             catch (Exception ex)
