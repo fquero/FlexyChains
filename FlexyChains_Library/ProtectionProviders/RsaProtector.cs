@@ -68,34 +68,21 @@ namespace FlexyChains_Library.ProtectionProviders
                 }
 
                 // Aplicar la encriptación directamente al nodo
-                XmlNode encryptedNode = _provider.Encrypt(node);
-                if (encryptedNode == null)
+                XmlNode encryptedNode = _provider.Encrypt(node) ?? throw new Exception("El proveedor de encriptación devolvió un nodo nulo.");
+
+                // Modificar el nodo original en lugar de crear uno nuevo
+                node.RemoveAll(); // Elimina todos los hijos actuales
+
+                if (node is XmlElement element)
                 {
-                    throw new Exception("El proveedor de encriptación devolvió un nodo nulo.");
+                    element.SetAttribute("configProtectionProvider", "RsaProtectedConfigurationProvider");
                 }
 
-                // Crear un nuevo nodo que preserve el nombre original
-                XmlDocument doc = node.OwnerDocument;
-                XmlElement newParentNode = doc.CreateElement(node.Name);
-                newParentNode.SetAttribute("configProtectionProvider", "RsaProtectedConfigurationProvider");
+                XmlNode importedEncryptedNode = node.OwnerDocument.ImportNode(encryptedNode, true);
+                node.AppendChild(importedEncryptedNode);
 
-                // Importar el nodo encriptado dentro del nuevo nodo
-                XmlNode importedEncryptedNode = doc.ImportNode(encryptedNode, true);
-                newParentNode.AppendChild(importedEncryptedNode);
-
-                // Reemplazar el nodo original con el nuevo nodo estructurado
-                XmlNode parent = node.ParentNode;
-                if (parent != null)
-                {
-                    parent.ReplaceChild(newParentNode, node);
-                }
-                else
-                {
-                    throw new Exception("El nodo original no tiene un nodo padre válido.");
-                }
-
-                Console.WriteLine("Nodo después de encriptar:");
-                Console.WriteLine(newParentNode.OuterXml);
+                //Console.WriteLine("Nodo después de encriptar:");
+                //Console.WriteLine(node.OuterXml);
             }
             catch (Exception ex)
             {
@@ -103,6 +90,7 @@ namespace FlexyChains_Library.ProtectionProviders
                 throw;
             }
         }
+
 
 
 

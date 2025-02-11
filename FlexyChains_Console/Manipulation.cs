@@ -216,7 +216,9 @@ namespace FlexyChains
             {
                 // Encriptar el nodo
                 _manipulator.EncryptNode();
-                
+                Console.WriteLine("TACHAAAAAAN:");
+                Console.WriteLine(_manipulator.ParentNode.OuterXml);
+
             }
             catch (Exception ex)
             {
