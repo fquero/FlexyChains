@@ -11,6 +11,6 @@ namespace FlexyChains_Library.Interfaces
     public interface IProtectionProvider
     {
         XmlNode Desencrypt(XmlNode node);
-        bool Encrypt(XElement node);
+        void Encrypt(XmlNode node);
     }
 }

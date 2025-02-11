@@ -12,16 +12,16 @@ namespace FlexyChains_Library
 {
     public class FileManager
     {
-        private readonly string _filePath;
+        public string FilePath { get; private set; }
         public XmlDocument Document { get; private set; }
         public FileManager(string filePath)
         {
-            _filePath = filePath;
+            FilePath = filePath;
 
             try
             {
                 Document = new XmlDocument();
-                Document.Load(_filePath);
+                Document.Load(FilePath);
             }
             catch (IOException ex)
             {
@@ -34,8 +34,21 @@ namespace FlexyChains_Library
 
         }
 
-        
-        
-        
+        public void SaveChanges(XmlDocument xmlModifiedDocument)
+        {
+            try
+            {
+                xmlModifiedDocument.Save(FilePath);
+            }
+            catch (IOException ex)
+            {
+                throw new IOException($"Error saving file: {ex.Message}", ex);
+            }
+            
+        }
+
+
+
+
     }
 }

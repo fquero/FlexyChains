@@ -1,6 +1,7 @@
 ﻿using FlexyChains_Library.Interfaces;
 using System;
 using System.Configuration;
+using System.Web.Configuration;
 using System.Xml;
 
 namespace FlexyChains_Library.ProtectionProviders
@@ -48,9 +49,52 @@ namespace FlexyChains_Library.ProtectionProviders
             }
         }
 
-        public bool Encrypt(System.Xml.Linq.XElement node)
+
+        public void Encrypt(XmlNode node)
         {
-            throw new NotImplementedException();
+            if (node == null)
+            {
+                throw new ArgumentNullException(nameof(node));
+            }
+
+            try
+            {
+                Console.WriteLine("Nodo antes de encriptar:");
+                Console.WriteLine(node.OuterXml);
+
+                if (_provider == null)
+                {
+                    throw new Exception("El proveedor de encriptación no está inicializado.");
+                }
+
+                // Aplicar la encriptación directamente al nodo
+                XmlNode encryptedNode = _provider.Encrypt(node) ?? throw new Exception("El proveedor de encriptación devolvió un nodo nulo.");
+
+                // Modificar el nodo original en lugar de crear uno nuevo
+                node.RemoveAll(); // Elimina todos los hijos actuales
+
+                if (node is XmlElement element)
+                {
+                    element.SetAttribute("configProtectionProvider", "RsaProtectedConfigurationProvider");
+                }
+
+                XmlNode importedEncryptedNode = node.OwnerDocument.ImportNode(encryptedNode, true);
+                node.AppendChild(importedEncryptedNode);
+
+                //Console.WriteLine("Nodo después de encriptar:");
+                //Console.WriteLine(node.OuterXml);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error en la encriptación: {ex.Message}");
+                throw;
+            }
         }
+
+
+
+
+
+
     }
 }
