@@ -41,40 +41,29 @@ namespace FlexyChains_Library
                 throw new InvalidOperationException($"Can't find node {_parentNodeName}");
             }
 
-            if(IsNodeEncrypted())
+            if (IsNodeEncrypted())
             {
                 IsInitialParentNodeEncrypted = true;
                 DecryptNode();
-            } else
+            }
+            else
             {
                 IsInitialParentNodeEncrypted = false;
             }
 
-            ParentNodeToString = $"<{ParentNode.Name} {string.Join(" ", ParentNode.Attributes.Cast<XmlAttribute>().Select(a => $"{a.Name}=\"{a.Value}\""))}>";
-
-            //if (_childNodeName != null)
-            //{
-            //    try
-            //    {
-            //        ChildNodesList = ParentNode.SelectNodes(_childNodeName);
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        throw new InvalidOperationException(ex.Message);
-            //    }
-            //}
+            SetParentNodeToString();
         }
-                
+
         public XmlNode GetNode() => ParentNode;
-       
+
         public XmlNodeList GetChildNodes()
         {
-            if(IsNodeEncrypted())
+            if (IsNodeEncrypted())
                 throw new InvalidOperationException("Node is encrypted! Desencrypt it first");
-            
+
             if (ChildNodesList.Count == 0)
                 throw new InvalidOperationException("No items found");
-            
+
             return ParentNode.SelectNodes(_childNodeName);
         }
 
@@ -97,7 +86,6 @@ namespace FlexyChains_Library
             {
                 UpdateParentTagNode(newNodeContent, oldNode);
             }
-
 
             IsNodeModified = true;
         }
@@ -195,11 +183,15 @@ namespace FlexyChains_Library
             // oldNode = oldElem; // No hace falta reasignar; oldNode sigue apuntando al mismo objeto.
 
             //6. Actualizamos tag
+            SetParentNodeToString();
+        }
+
+        protected void SetParentNodeToString()
+        {
             ParentNodeToString = $"<{ParentNode.Name} {string.Join(" ", ParentNode.Attributes.Cast<XmlAttribute>().Select(a => $"{a.Name}=\"{a.Value}\""))}>";
         }
 
-
+    }
 
 
     }
-}
