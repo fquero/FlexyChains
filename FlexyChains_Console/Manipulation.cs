@@ -54,6 +54,7 @@ namespace FlexyChains
 
             try
             {
+                Console.Clear();
                 if (!NodeManipulatorFactory.GetManipulationIndex().TryGetValue(selectedOptionIndex, out ManipulationOption selectedOption))
                 {
                     throw new Exception("Invalid option selected");
@@ -152,7 +153,8 @@ namespace FlexyChains
             string newValue = string.IsNullOrWhiteSpace(input) ? node.OuterXml : input;
 
             string option = MenuHandler.SaveNodeMenu(newValue);
-            
+
+            Console.Clear();
             switch (option)
             {
                 case "n":
@@ -189,6 +191,7 @@ namespace FlexyChains
 
             } catch (Exception ex)
             {
+                Console.Clear();
                 MenuHandler.PrintError($"{ex.Message} : {ex}", true);
                 ShowNodeContent();
             }
