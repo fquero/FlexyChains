@@ -6,13 +6,15 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("FlexyChains_Library.Tests")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("An open-source tool for managing encrypted configurations in .NET Framework. Available on GitHub: https://github.com/fquero/FlexyChains")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("FlexyChains_Library.Tests")]
-[assembly: AssemblyCopyright("Copyright ©  2025")]
+[assembly: AssemblyCompany("Fran Quero")]
+[assembly: AssemblyProduct("FlexyChains")]
+[assembly: AssemblyCopyright("No copyright - Open Source")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
+[assembly: AssemblyMetadata("License", "MIT")]
+[assembly: AssemblyMetadata("Repository", "https://github.com/fquero/FlexyChains")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
