@@ -21,71 +21,36 @@ namespace FlexyChains_Library
             ProtectionProvider = new RsaProtector();
         }
 
-        //public override void DecryptNode()
-        //{
-        //    try
-        //    {
-        //        // Desencriptamos y obtenemos el nodo desencriptado.
-        //        XmlNode decryptedNode = ProtectionProvider.Desencrypt(ParentNode);
-
-        //        // Verificamos si el nodo desencriptado pertenece al mismo documento.
-        //        // Si no es así, lo importamos al documento original.
-        //        if (decryptedNode.OwnerDocument != XmlDocument)
-        //        {
-        //            decryptedNode = XmlDocument.ImportNode(decryptedNode, true);
-        //        }
-
-        //        // Asignamos el nodo desencriptado (ya importado) como nuevo ParentNode.
-        //        ParentNode = decryptedNode;
-        //        ChildNodesList = ParentNode.SelectNodes(_childNodeName);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        throw new Exception(ex.Message);
-        //    }
-        //}
         public override void DecryptNode()
         {
             try
             {
-                // 1. Obtener el nodo desencriptado (y si es de otro doc, importarlo).
+                //1. Get the decrypted node (and if it's from another doc, import it).
                 XmlNode decryptedNode = ProtectionProvider.Desencrypt(ParentNode);
                 if (decryptedNode.OwnerDocument != XmlDocument)
                 {
                     decryptedNode = XmlDocument.ImportNode(decryptedNode, true);
                 }
 
-                // 2. Sobrescribir el contenido de ParentNode sin reemplazar la instancia.
-                //    a) Eliminar atributos y nodos hijos actuales
+                //2. Replace ParentNode content without replacing the instance.
+                //  a) Delete current attributes and child nodes
                 ParentNode.RemoveAll(); // Quita hijos y atributos
-                                        //    b) Copiar atributos desde el nodo desencriptado
+
+                //  b) Copy attributes from decrypted node
                 foreach (XmlAttribute attr in decryptedNode.Attributes)
                 {
-                    // Agregar atributo al nodo original
+                    // Add attribute to original node
                     ((XmlElement)ParentNode).SetAttribute(attr.Name, attr.Value);
                 }
-                //    c) Copiar cada hijo desde el nodo desencriptado
+
+                //  c) copy each child from decrypted node
                 foreach (XmlNode child in decryptedNode.ChildNodes)
                 {
                     ParentNode.AppendChild(child.CloneNode(deep: true));
                 }
 
-                // 3. ChildNodesList sigue apuntando al mismo ParentNode, 
-                //    solo necesitas refrescar su contenido.
-                //ChildNodesList = ParentNode.SelectNodes(_childNodeName);
-
-                //Si se ha definido un nodo hijo, se actualiza la lista de nodos hijos.
-                if (_childNodeName != null)
-                {
-                    try
-                    {
-                        ChildNodesList = ParentNode.SelectNodes(_childNodeName);
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new InvalidOperationException(ex.Message);
-                    }
-                }
+                //Update the child nodes list.
+                SetChildNodes();
             }
             catch (Exception ex)
             {
@@ -93,16 +58,137 @@ namespace FlexyChains_Library
             }
         }
 
-
-
-
-        public XElement EditItem(XElement item)
+        protected override void SetChildNodes()
         {
-            throw new NotImplementedException();
+            if (_childNodeName != null)
+            {
+                try
+                {
+                    ChildNodesList = ParentNode.SelectNodes(_childNodeName);
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException(ex.Message);
+                }
+            }
+        }
+
+        protected override void UpdateFullChildNode(string newNodeContent, XmlNode oldNode)
+        {
+            //Parse new content to get full elmenet instead of using innerXml
+            XmlDocumentFragment fragment = XmlDocument.CreateDocumentFragment();
+            fragment.InnerXml = newNodeContent;
+
+            if (fragment.ChildNodes.Count == 1 && fragment.FirstChild.NodeType == XmlNodeType.Element)
+            {
+                // Asume new content is a full element
+                XmlNode newNode = fragment.FirstChild;
+
+                XmlNode parent = oldNode.ParentNode;
+                if (parent == null)
+                    throw new InvalidOperationException("oldNode has no parent and cannot be replaced");
+
+                // Replace original node with new one (importing if necessary)
+                parent.ReplaceChild(XmlDocument.ImportNode(newNode, true), oldNode);
+            }
+            else
+            {
+                // If fragment is not a single element, update inner XML directly.
+                oldNode.InnerXml = newNodeContent;
+            }
+        }
+
+        protected override void UpdateParentTagNode(string openingTagWithAttributes, XmlNode oldNode)
+        {
+            if (oldNode == null)
+                throw new ArgumentNullException(nameof(oldNode));
+            if (oldNode.OwnerDocument == null)
+                throw new InvalidOperationException("El nodo antiguo no está asociado a un documento.");
+            if (oldNode.NodeType != XmlNodeType.Element)
+                throw new InvalidOperationException("oldNode debe ser un elemento para actualizar sus atributos.");
+
+            // 1. Parse the opening tag to extract the name and attributes.
+            //    assuming openingTagWithAttributes contains something like:
+            //    "<smtp deliveryMethod="Network" from="mymail@domain.com">"
+
+            // convert it into a “balanced” XML to be able to use InnerXml:
+            //   "<smtp ...> </smtp>"
+            string openingTag = openingTagWithAttributes.Trim();
+
+            // Obtain tag name after '<'
+            var match = System.Text.RegularExpressions.Regex.Match(
+                openingTag,
+                @"^<\s*(?<tagName>[\w:_-]+)"
+            );
+            if (!match.Success)
+                throw new InvalidOperationException("Tag name couldn't be extracted from opening tag ");
+
+            string newTagName = match.Groups["tagName"].Value;
+
+            // Verifica que el nombre no cambie
+            if (!oldNode.Name.Equals(newTagName, StringComparison.Ordinal))
+            {
+                throw new InvalidOperationException(
+                    $"Node name changed from '{oldNode.Name}' to '{newTagName}', and it is not allowed."
+                );
+            }
+
+            // Complete the tag with the closing '>' if it's missing
+            if (!openingTag.EndsWith(">"))
+            {
+                openingTag += ">";
+            }
+            // Example "<smtp ...></smtp>"
+            string balancedXml = $"{openingTag}</{newTagName}>";
+
+            // 2. Parse into a DocumentFragment
+            XmlDocument doc = oldNode.OwnerDocument;
+            XmlDocumentFragment fragment = doc.CreateDocumentFragment();
+            fragment.InnerXml = balancedXml;
+
+            // 3. Verify that the fragment contains a single element
+            if (!(fragment.FirstChild is XmlElement parsedElement))
+                throw new InvalidOperationException("Fragment could not be parsed like single element.");
+
+            // 4. overwrite attributes in the old node
+            XmlElement oldElem = (XmlElement)oldNode;
+            oldElem.Attributes.RemoveAll(); // elimina atributos antiguos
+
+            // Copy attributes from parsed element to old element
+            foreach (XmlAttribute attr in parsedElement.Attributes)
+            {
+                // Import to ensure it belongs to the same document
+                XmlAttribute importedAttr = (XmlAttribute)doc.ImportNode(attr, true);
+                oldElem.Attributes.Append(importedAttr);
+            }
+
+            // 5. Don't touch oldNode children => they remain.
+
+            //6. Update ParentNodeToString
+            SetParentNodeToString();
+        }
+
+        public override void EncryptNode()
+        {
+            try
+            {
+                if (ProtectionProvider == null)
+                    throw new InvalidOperationException("ProtectionProvider is not set");
+                if (IsNodeEncrypted())
+                    throw new InvalidOperationException("Node is already encrypted");
+
+                ProtectionProvider.Encrypt(ParentNode);
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw new InvalidOperationException($"Couldn't encrypt: {ex.Message}", ex);
+
+            }
+
         }
 
 
-        
+
 
     }
 }
