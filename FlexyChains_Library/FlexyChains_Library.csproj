@@ -36,7 +36,7 @@
     <OutputPath>bin\x64\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
@@ -67,7 +67,7 @@
     <Compile Include="Interfaces\IProtectionProvider.cs" />
     <Compile Include="NodeManipulation\NodeEditor.cs" />
     <Compile Include="NodeManipulatorFactory.cs" />
-    <Compile Include="NodeManipulation\NodeBase.cs" />
+    <Compile Include="NodeManipulation\NodeManipulatorBase.cs" />
     <Compile Include="NodeManipulation\GenericNodeManipulator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProtectionProviders\RsaProtector.cs" />
