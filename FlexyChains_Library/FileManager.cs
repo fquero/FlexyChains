@@ -34,11 +34,12 @@ namespace FlexyChains_Library
 
         }
 
-        public void SaveChanges(XmlDocument xmlModifiedDocument)
+        public bool SaveChanges(XmlDocument xmlModifiedDocument)
         {
             try
             {
                 xmlModifiedDocument.Save(FilePath);
+                return true;
             }
             catch (IOException ex)
             {
