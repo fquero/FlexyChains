@@ -1,15 +1,20 @@
 ﻿using FlexyChains_Library.Interfaces;
 using System;
 using System.Configuration;
-using System.Web.Configuration;
 using System.Xml;
 
 namespace FlexyChains_Library.ProtectionProviders
 {
+    /// <summary>
+    /// Provides RSA encryption and decryption for XML nodes.
+    /// </summary>
     public class RsaProtector : IProtectionProvider
     {
         private readonly RsaProtectedConfigurationProvider _provider;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RsaProtector"/> class.
+        /// </summary>
         public RsaProtector()
         {
             // Get provider from configuration
@@ -20,14 +25,17 @@ namespace FlexyChains_Library.ProtectionProviders
             }
         }
 
-        
+        /// <summary>
+        /// Desencrypts the specified node.
+        /// </summary>
+        /// <param name="node">The node to desencrypt.</param>
+        /// <returns>The desencrypted node.</returns>
         public XmlNode Desencrypt(XmlNode node)
         {
             if (node == null)
             {
                 throw new ArgumentNullException(nameof(node));
             }
-                
 
             try
             {
@@ -49,7 +57,10 @@ namespace FlexyChains_Library.ProtectionProviders
             }
         }
 
-
+        /// <summary>
+        /// Encrypts the specified node.
+        /// </summary>
+        /// <param name="node">The node to encrypt.</param>
         public void Encrypt(XmlNode node)
         {
             if (node == null)
@@ -90,11 +101,5 @@ namespace FlexyChains_Library.ProtectionProviders
                 throw;
             }
         }
-
-
-
-
-
-
     }
 }

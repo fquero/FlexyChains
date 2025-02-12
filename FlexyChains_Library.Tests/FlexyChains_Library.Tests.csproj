@@ -59,8 +59,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\filelab\web_CLEAN_EXAMPLE.config" />
-    <None Include="assets\WebEncrypted.config" />
-    <None Include="assets\WebUnencrypted.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -30,7 +30,7 @@ namespace FlexyChains_Library.Tests
             _assetsPath = GetAssetsPath();
             Assert.NotNull(_assetsPath);
 
-            string filePath = Path.Combine(_assetsPath, "WebUnencrypted.config");
+            string filePath = Path.Combine(_assetsPath, @"filelab\web_CLEAN_EXAMPLE.config");
             Assert.True(File.Exists(filePath), $"Not found: {filePath}");
 
             FileManager fileManager = new FileManager(filePath);

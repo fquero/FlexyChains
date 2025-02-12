@@ -1,18 +1,19 @@
-﻿using FlexyChains_Library.Interfaces;
-using FlexyChains_Library.ProtectionProviders;
+﻿using FlexyChains_Library.ProtectionProviders;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
-using System.Xml.Linq;
 
 namespace FlexyChains_Library
 {
+    /// <summary>
+    /// Provides generic node manipulation functionality.
+    /// </summary>
     public class GenericNodeManipulator : NodeBase
     {
-        
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GenericNodeManipulator"/> class.
+        /// </summary>
+        /// <param name="nodeName">The name of the node.</param>
+        /// <param name="elementName">The name of the element.</param>
         public GenericNodeManipulator(
             string nodeName,
             string elementName
@@ -21,6 +22,9 @@ namespace FlexyChains_Library
             ProtectionProvider = new RsaProtector();
         }
 
+        /// <summary>
+        /// Decrypts the node.
+        /// </summary>
         public override void DecryptNode()
         {
             try
@@ -58,6 +62,9 @@ namespace FlexyChains_Library
             }
         }
 
+        /// <summary>
+        /// Sets the child nodes.
+        /// </summary>
         protected override void SetChildNodes()
         {
             if (_childNodeName != null)
@@ -73,6 +80,11 @@ namespace FlexyChains_Library
             }
         }
 
+        /// <summary>
+        /// Updates the full child node.
+        /// </summary>
+        /// <param name="newNodeContent">The new node content.</param>
+        /// <param name="oldNode">The old node.</param>
         protected override void UpdateFullChildNode(string newNodeContent, XmlNode oldNode)
         {
             //Parse new content to get full elmenet instead of using innerXml
@@ -98,6 +110,11 @@ namespace FlexyChains_Library
             }
         }
 
+        /// <summary>
+        /// Updates the parent tag node.
+        /// </summary>
+        /// <param name="openingTagWithAttributes">The opening tag with attributes.</param>
+        /// <param name="oldNode">The old node.</param>
         protected override void UpdateParentTagNode(string openingTagWithAttributes, XmlNode oldNode)
         {
             if (oldNode == null)
@@ -168,6 +185,9 @@ namespace FlexyChains_Library
             SetParentNodeToString();
         }
 
+        /// <summary>
+        /// Encrypts the node.
+        /// </summary>
         public override void EncryptNode()
         {
             try
@@ -186,9 +206,5 @@ namespace FlexyChains_Library
             }
 
         }
-
-
-
-
     }
 }
