@@ -8,7 +8,7 @@ namespace FlexyChains_Library
     /// <summary>
     /// Abstract base class for node manipulation.
     /// </summary>
-    public abstract class NodeBase : INodeManipulator
+    public abstract class NodeManipulatorBase : INodeManipulator
     {
         public abstract void DecryptNode();
         public XmlDocument XmlDocument { get; private set; }
@@ -37,11 +37,11 @@ namespace FlexyChains_Library
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="NodeBase"/> class.
+        /// Initializes a new instance of the <see cref="NodeManipulatorBase"/> class.
         /// </summary>
         /// <param name="parentNodeName">The name of the parent node.</param>
         /// <param name="childNodeName">The name of the child node.</param>
-        protected NodeBase(string parentNodeName, string childNodeName = null)
+        protected NodeManipulatorBase(string parentNodeName, string childNodeName = null)
         {
             _parentNodeName = parentNodeName;
             _childNodeName = childNodeName;

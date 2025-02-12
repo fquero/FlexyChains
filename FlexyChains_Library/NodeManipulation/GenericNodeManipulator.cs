@@ -7,7 +7,7 @@ namespace FlexyChains_Library
     /// <summary>
     /// Provides generic node manipulation functionality.
     /// </summary>
-    public class GenericNodeManipulator : NodeBase
+    public class GenericNodeManipulator : NodeManipulatorBase
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="GenericNodeManipulator"/> class.
@@ -120,9 +120,9 @@ namespace FlexyChains_Library
             if (oldNode == null)
                 throw new ArgumentNullException(nameof(oldNode));
             if (oldNode.OwnerDocument == null)
-                throw new InvalidOperationException("El nodo antiguo no está asociado a un documento.");
+                throw new InvalidOperationException("oldNode not associated to document");
             if (oldNode.NodeType != XmlNodeType.Element)
-                throw new InvalidOperationException("oldNode debe ser un elemento para actualizar sus atributos.");
+                throw new InvalidOperationException("oldNode must be an element to update its attributes");
 
             // 1. Parse the opening tag to extract the name and attributes.
             //    assuming openingTagWithAttributes contains something like:
