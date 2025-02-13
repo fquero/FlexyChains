@@ -166,6 +166,9 @@ namespace FlexyChains
             // If user does not type, we keep initial value
             string newValue = string.IsNullOrWhiteSpace(input) ? node.OuterXml : input;
 
+            //For security, clipboard is cleared
+            Clipboard.Clear();
+
             string option = MenuHandler.SaveNodeMenu(newValue);
 
             Console.Clear();
