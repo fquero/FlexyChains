@@ -21,10 +21,9 @@ namespace FlexyChains
                 Console.Clear();
             }
 
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("");
+            Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine(title);
-            PrintSeparator(ConsoleColor.Blue, 70);
+            PrintSeparator(ConsoleColor.Cyan, 63);
             Console.ResetColor();
         }
 
@@ -66,7 +65,18 @@ namespace FlexyChains
         /// <returns>The file path entered by the user.</returns>
         internal static string SetFilePath()
         {
-            PrintTitle("FlexyChains");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine(@"
+ _____ _                  ____ _           _           
+|  ___| | _____  ___   _ / ___| |__   __ _(_)_ __  ___ 
+| |_  | |/ _ \ \/ / | | | |   | '_ \ / _` | | '_ \/ __|
+|  _| | |  __/>  <| |_| | |___| | | | (_| | | | | \__ \
+|_|   |_|\___/_/\_\\__, |\____|_| |_|\__,_|_|_| |_|___/
+FQuero tribute to  |___/ Prodisa & Flexygo                               
+");
+            Console.ResetColor();
+
+            PrintTitle("Seamless web.config editing, encryption, and secure data lookup");
 
             Console.ResetColor();
             Console.WriteLine("Write or paste absolute path to web.config:");
