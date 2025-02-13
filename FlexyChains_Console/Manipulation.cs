@@ -4,6 +4,8 @@ using System;
 using System.Xml;
 using System.Windows.Forms;
 using FlexyChains_Library.NodeManipulation;
+using System.Text.RegularExpressions;
+using System.ComponentModel;
 
 namespace FlexyChains
 {
@@ -29,6 +31,14 @@ namespace FlexyChains
             {
                 string path = MenuHandler.SetFilePath();
 
+                if (!Regex.IsMatch(path, @"web.config$"))
+                {
+                    Console.Clear();
+                    MenuHandler.PrintError("Invalid input: path must resolve to a web.config file.");
+                    Start();
+                    return;
+                }
+
                 //Select file
                 _fileManager = new FileManager(path);
                 ManipulatorSelection();
@@ -49,6 +59,7 @@ namespace FlexyChains
 
             if (selectedOptionIndex == 0)
             {
+                Console.Clear();
                 Start();
                 return;
             }
@@ -83,7 +94,7 @@ namespace FlexyChains
             {
                 while (true)
                 {
-                    string selection = MenuHandler.DisplayNodeContent(_manipulator.ParentNodeToString, _manipulator.GetChildNodes(), _manipulator.IsNodeModified);
+                    string selection = MenuHandler.DisplayNodeContent(_fileManager.FilePath, _manipulator.ParentNodeToString, _manipulator.GetChildNodes(), _manipulator.IsNodeModified);
 
                     if (selection.Equals("x", StringComparison.OrdinalIgnoreCase)) //faster and optimized comparison
                     {

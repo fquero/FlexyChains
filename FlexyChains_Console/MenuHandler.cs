@@ -23,7 +23,7 @@ namespace FlexyChains
 
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine(title);
-            PrintSeparator(ConsoleColor.Cyan, 63);
+            PrintSeparator(ConsoleColor.Cyan, 71);
             Console.ResetColor();
         }
 
@@ -75,8 +75,12 @@ namespace FlexyChains
 FQuero tribute to  |___/ Prodisa & Flexygo                               
 ");
             Console.ResetColor();
-
-            PrintTitle("Seamless web.config editing, encryption, and secure data lookup");
+            Console.BackgroundColor = ConsoleColor.Cyan;
+            Console.ForegroundColor = ConsoleColor.Black;
+            Console.WriteLine("https://github.com/fquero/flexychains");
+            
+            Console.ResetColor();
+            PrintTitle("Seamless ASP.NET web.config editing, encryption, and secure data lookup");
 
             Console.ResetColor();
             Console.WriteLine("Write or paste absolute path to web.config:");
@@ -121,10 +125,15 @@ FQuero tribute to  |___/ Prodisa & Flexygo
         /// <param name="nodesList">The list of child nodes.</param>
         /// <param name="IsNodeEdited">If set to <c>true</c>, indicates that the node has been edited.</param>
         /// <returns>The user's selection.</returns>
-        internal static string DisplayNodeContent(string parentNodeString, XmlNodeList nodesList = null, bool IsNodeEdited = false)
+        internal static string DisplayNodeContent(string filePath, string parentNodeString, XmlNodeList nodesList = null, bool IsNodeEdited = false)
         {
             try
             {
+                Console.BackgroundColor = ConsoleColor.Cyan;
+                Console.ForegroundColor = ConsoleColor.Black;
+                Console.WriteLine(filePath);
+                Console.ResetColor();
+
                 PrintTitle("SHOWING NODE CONTENT");
 
                 Console.ForegroundColor = ConsoleColor.Magenta;
