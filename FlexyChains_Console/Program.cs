@@ -1,15 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace FlexyChains_Console
+namespace FlexyChains
 {
     internal class Program
     {
+        [STAThread]
         static void Main(string[] args)
         {
+            try
+            {
+                Manipulation manipulation = new Manipulation();
+                
+            }
+            catch(Exception ex)
+            {
+                throw new Exception(ex.Message, ex);
+            }
+            
         }
+       
     }
+
+
 }

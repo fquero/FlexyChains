@@ -3,6 +3,10 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+#testing file
+FlexyChains_Library.Tests/assets/my/
+FlexyChains_Library.Tests/assets/filelab/web.config
+
 # User-specific files
 *.rsuser
 *.suo

@@ -6,13 +6,15 @@ using System.Runtime.InteropServices;
 // conjunto de atributos. Cambie estos valores de atributo para modificar la información
 // asociada con un ensamblado.
 [assembly: AssemblyTitle("FlexyChains_Library")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("An open-source tool for managing encrypted configurations in .NET Framework. Available on GitHub: https://github.com/fquero/FlexyChains")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("FlexyChains_Library")]
-[assembly: AssemblyCopyright("Copyright ©  2025")]
+[assembly: AssemblyCompany("Fran Quero")]
+[assembly: AssemblyProduct("FlexyChains")]
+[assembly: AssemblyCopyright("No copyright - Open Source")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
+[assembly: AssemblyMetadata("License", "MIT")]
+[assembly: AssemblyMetadata("Repository", "https://github.com/fquero/FlexyChains")]
 
 // Si establece ComVisible en false, los tipos de este ensamblado no estarán visibles 
 // para los componentes COM.  Si es necesario obtener acceso a un tipo en este ensamblado desde 
