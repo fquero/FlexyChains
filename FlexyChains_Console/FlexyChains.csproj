@@ -24,6 +24,10 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
+    <SupportUrl>https://github.com/fquero/FlexyChains</SupportUrl>
+    <TargetCulture>en-001</TargetCulture>
+    <ProductName>FlexyChains</ProductName>
+    <PublisherName>Fran Quero</PublisherName>
     <ApplicationRevision>1</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>

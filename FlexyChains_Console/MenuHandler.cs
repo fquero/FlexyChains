@@ -69,7 +69,7 @@ namespace FlexyChains
             PrintTitle("FlexyChains");
 
             Console.ResetColor();
-            Console.WriteLine("Write FilePath to web.config:");
+            Console.WriteLine("Write or paste absolute path to web.config:");
             Console.WriteLine("(Type 'quit' to exit)");
             string path = Console.ReadLine();
 

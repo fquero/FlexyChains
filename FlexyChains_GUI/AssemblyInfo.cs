@@ -9,14 +9,3 @@ using System.Windows;
                                                 //(used if a resource is not found in the page,
                                                 // app, or any theme specific resource dictionaries)
 )]
-
-[assembly: AssemblyTitle("FlexyChains_GUI")]
-[assembly: AssemblyDescription("An open-source tool for managing encrypted configurations in .NET Framework. Available on GitHub: https://github.com/fquero/FlexyChains")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Fran Quero")]
-[assembly: AssemblyProduct("FlexyChains")]
-[assembly: AssemblyCopyright("No copyright - Open Source")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-[assembly: AssemblyMetadata("License", "MIT")]
-[assembly: AssemblyMetadata("Repository", "https://github.com/fquero/FlexyChains")]

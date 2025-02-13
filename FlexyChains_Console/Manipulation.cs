@@ -27,8 +27,6 @@ namespace FlexyChains
         {
             try
             {
-                Clipboard.SetText("C:\\Users\\franp\\source\\repos\\FlexyChains\\FlexyChains_Library.Tests\\assets\\my\\web.config");
-
                 string path = MenuHandler.SetFilePath();
 
                 //Select file
@@ -209,9 +207,6 @@ namespace FlexyChains
         /// </summary>
         private void SaveChanges()
         {
-            Console.Clear();
-            Console.WriteLine("@Todo: verifying encryption in console...");
-
             if (_manipulator.IsNodeEncrypted())
             {
                 Console.WriteLine("El nodo ya está encriptado. No se realizará la operación.");
@@ -229,6 +224,7 @@ namespace FlexyChains
                 Console.WriteLine(_fileManager.FilePath);
                 Console.WriteLine("Press any key to restart");
                 Console.ReadKey();
+                Console.Clear();
                 Start();
             }
             catch (Exception ex)
