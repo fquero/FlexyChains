@@ -15,12 +15,11 @@ FlexyChains consists of the following modules:
 
 1. **FlexyChains_Library** (Class Library):
    - Handles the business logic for decrypting, modifying, and re-encrypting `web.config` sections.
-   - Supports `RsaProtectedConfigurationProvider` and `DPAPIProtectedConfigurationProvider`.
+   - Supports `RsaProtectedConfigurationProvider`.
    - Allows integration with external applications.
 
 2. **FlexyChain_Console** (Console Application):
    - Command-line interface.
-   - Facilitates automation through scripts in CI/CD environments.
 
 3. **FlexyChain_GUI** (Graphical Interface - WPF):
    - **Not yet implemented**, but may be added in the future.
@@ -32,7 +31,7 @@ FlexyChains consists of the following modules:
 ✅ **New custom icon** for a more professional look.  
 ✅ **Standalone executable (.exe)** – no installation required.  
 ✅ **Easy management of encrypted sections** in `web.config`.  
-✅ **Compatible with RSA and DPAPI encryption providers**.  
+✅ **Compatible with RSA encryption provider**.  
 ✅ **Available in console version**.  
 ✅ **Ready for extension** with two main interfaces: `INodeManipulator` and `IProtectionProvider`.
 
@@ -95,7 +94,7 @@ FlexyChains está compuesto por los siguientes proyectos:
 
 1. **FlexyChains_Library** (Librería de Clases):
    - Maneja la lógica de negocio para desencriptar, modificar y volver a encriptar secciones de `web.config`.
-   - Soporta `RsaProtectedConfigurationProvider` y `DPAPIProtectedConfigurationProvider`.
+   - Soporta `RsaProtectedConfigurationProvider`.
    - Permite la integración con aplicaciones externas.
 
 2. **FlexyChain** (Aplicación de Consola):
